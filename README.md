@@ -325,4 +325,4 @@ del habits.db 2>nul
 
 ## License
 
-This project is intended for academic/portfolio use only.
+This project is licensed under the MIT License and intended for academic/portfolio use only.
