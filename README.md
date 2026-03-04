@@ -149,7 +149,7 @@ High-level structure:
 ### Windows PowerShell (recommended)
 
 ```powershell
-cd path\to\habit_tracker_program
+cd habit_tracker_program
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
