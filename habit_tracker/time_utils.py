@@ -2,11 +2,11 @@ from datetime import datetime, timezone, timedelta, date
 from typing import Tuple
 
 def now_utc_iso() -> str:
-    """Current time in UTC ISO-8601 (seconds precision)."""
+    """Current time in UTC ISO-8601."""
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 def parse_iso(dt_iso: str) -> datetime:
-    """Parse ISO string. Python 3.7+ supports timezone offsets via fromisoformat."""
+    """Parse ISO string."""
     return datetime.fromisoformat(dt_iso)
 
 def to_local_date(dt: datetime) -> date:
@@ -33,7 +33,7 @@ def parse_iso_week_key(key: str) -> Tuple[int, int]:
 
 def iso_week_monday(iso_year: int, iso_week: int) -> date:
     """
-    Monday date of an ISO week (Python 3.7 compatible).
+    Monday date of an ISO week.
     ISO week 1 is the week containing Jan 4th.
     """
     jan4 = date(iso_year, 1, 4)

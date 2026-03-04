@@ -36,7 +36,7 @@ def test_streaks_match_expected_tables_for_each_predefined_habit(habit_objects, 
 def test_longest_streak_all_selects_daily_perfect(habit_objects, predefined_completions):
     """Across the whole predefined dataset, Daily Perfect should win with a streak of 28."""
     # longest_streak_all calls get_completions_fn(habit.id).
-    # In conftest, we intentionally set habit.id == habit.name to make lookups trivial.
+    # In conftest, I intentionally set habit.id == habit.name to make lookups trivial.
     best_habit, best_streak = longest_streak_all(
         habit_objects,
         lambda habit_id: predefined_completions.get(habit_id, []),
@@ -59,6 +59,6 @@ def test_period_keys_collapses_duplicates_within_the_same_period():
 
 
 def test_period_keys_rejects_unsupported_periodicity_values():
-    """Only daily/weekly are supported in this project; anything else should raise."""
+    """Only daily/weekly are supported in this application; anything else should raise."""
     with pytest.raises(ValueError):
         period_keys(["2026-01-05T12:00:00"], "monthly")

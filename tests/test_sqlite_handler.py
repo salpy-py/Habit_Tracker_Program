@@ -8,7 +8,7 @@ from habit_tracker.storage import SQLiteStorage
 def test_init_db_creates_tables_indexes_and_fk_cascade(db_path):
     """init_db() should set up the expected schema and constraints.
 
-    We verify:
+    I verify:
     - required tables exist
     - the unique index for completions exists
     - completions has a FK to habits with ON DELETE CASCADE
@@ -94,7 +94,7 @@ def test_get_habit_by_name_is_case_insensitive(storage):
     """get_habit_by_name should not care about name casing."""
     storage.init_db()
 
-    # Insert directly via storage (bypassing tracker), so we test storage behavior in isolation.
+    # Insert directly via storage (bypassing tracker), so I test storage behavior in isolation.
     from habit_tracker.models import Habit
 
     habit = Habit(

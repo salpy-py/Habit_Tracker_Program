@@ -8,17 +8,13 @@ from . import analytics
 def _format_id(habit_id: str) -> str:
     """Format a habit ID for display.
 
-    We currently display the full ID in the CLI. This helper exists so that
-    if you ever decide to switch to shortened IDs, you only change it here.
+    We only display the full ID in the CLI. 
     """
     return habit_id or ""
 
 
 def _print_table(headers, rows) -> None:
-    """Print a simple aligned table to the terminal.
-
-    This intentionally avoids external dependencies (like tabulate) to keep the
-    project lightweight and easy to run on any machine.
+    """Print table to the terminal.
     """
     if not rows:
         return
@@ -61,7 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
     delete_cmd = subcommands.add_parser("delete", help="Delete a habit by name or id")
     delete_cmd.add_argument("--key", required=True, help="Habit name or id")
 
-    # IMPORTANT: create the parser first, then add its arguments.
+    # It is important to make sure to create parser first and then add its arguments.
     checkoff_cmd = subcommands.add_parser("checkoff", help="Record a completion for a habit")
     checkoff_cmd.add_argument("--key", required=True, help="Habit name or id")
     checkoff_cmd.add_argument(
@@ -105,7 +101,7 @@ def _cmd_delete(tracker: HabitTracker, args) -> int:
 
 def _cmd_checkoff(tracker: HabitTracker, args) -> int:
     # If --at is not provided, timestamp_iso will be None and the tracker
-    # will record the completion using the current time (existing behavior).
+    # will record the completion using the current time.
     tracker.check_off(args.key, timestamp_iso=getattr(args, "timestamp_iso", None))
     print("Check-off recorded.")
     return 0
@@ -213,12 +209,12 @@ def main(argv=None) -> int:
         if args.cmd == "analyze":
             return _cmd_analyze(tracker, args)
 
-        # Fallback guard: should not be reached with argparse's required subcommand.
+        # Fallback: should not be reached with argparse's required subcommand.
         print("Unknown command. Use --help.")
         return 2
 
     except ValueError as e:
-        # Keep error output user-friendly: show message + hint.
+        # Keep the error output user-friendly by showing the message + hint.
         print(f"Error: {e}")
         print("Hint: run with --help for usage.")
         return 2

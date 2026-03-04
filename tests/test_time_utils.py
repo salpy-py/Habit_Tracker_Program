@@ -43,7 +43,7 @@ def test_day_key_uses_local_day_for_naive_timestamps(iso_timestamp, expected_day
 @pytest.mark.parametrize(
     "iso_timestamp, expected_key",
     [
-        # ISO week boundaries are easy to get wrong, so we test a few famous edge cases.
+        # ISO week boundaries are easy to get wrong, so I test a few famous edge cases.
         ("2021-01-01T10:00:00", "2020-W53"),  # Jan 1, 2021 belongs to ISO week 53 of 2020
         ("2018-12-31T10:00:00", "2019-W01"),  # Dec 31, 2018 belongs to ISO week 1 of 2019
         ("2022-01-01T10:00:00", "2021-W52"),  # Jan 1, 2022 belongs to ISO week 52 of 2021
@@ -85,7 +85,7 @@ def test_to_local_date_keeps_date_when_datetime_is_already_local_timezone():
 def test_local_datetime_to_utc_iso_roundtrip_preserves_local_date():
     """A local date converted to UTC ISO should still map back to the same local date.
 
-    We pick midday on purpose to avoid edge cases around midnight and DST-like boundaries.
+    I pick midday on purpose to avoid edge cases around midnight and DST-like boundaries.
     """
     original_local_date = date(2026, 1, 5)
 

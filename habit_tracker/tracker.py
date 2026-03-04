@@ -7,9 +7,10 @@ from .storage import Storage
 from .time_utils import now_utc_iso, local_datetime_to_utc_iso
 from . import analytics
 
-# Supported habit periodicities (portfolio requirement).
+# Habit periodicities.
 VALID_PERIODS = ("daily", "weekly")
 
+# Predefined 5-habits (which runs with the execution of the seed command)
 DEFAULT_HABITS = [
     ("Drink 2L water", "daily"),
     ("Read 20 minutes", "daily"),
@@ -122,7 +123,7 @@ class HabitTracker:
 
         Notes:
         - Idempotent: if app_meta.fixture_seeded is true, seeding is skipped.
-        - Intended for demo usage (not used by unit tests).
+        - Intended for demo usage.
         """
         if self.storage.get_meta("fixture_seeded") == "true":
             return "Fixture already seeded. Skipping."

@@ -40,7 +40,7 @@ def test_streak_calculations_match_expected_values_for_fixture(predefined_comple
 def test_longest_streak_all_picks_the_expected_best_habit(habit_objects, predefined_completions):
     """Longest streak across all habits should be 'Daily Perfect' with 28 periods.
 
-    In conftest we intentionally set habit.id == habit.name for analytics-only tests.
+    In conftest, I intentionally set habit.id == habit.name for analytics-only tests.
     That makes it easy to retrieve the correct completion list by ID.
     """
     best_habit, best_streak = longest_streak_all(

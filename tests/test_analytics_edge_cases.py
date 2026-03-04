@@ -87,7 +87,7 @@ def test_period_key_helpers_collapse_multiple_events_into_one_period():
 
 
 def test_invalid_periodicity_values_raise_value_error():
-    """Analytics functions should reject unsupported periodicities."""
+    """Analytics functions would not accept unsupported periodicities."""
     with pytest.raises(ValueError):
         longest_streak_for(["2026-01-05T12:00:00"], "monthly")
 

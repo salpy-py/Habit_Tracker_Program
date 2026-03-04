@@ -1,14 +1,14 @@
 """Analytics helpers for the Habit Tracker.
 
-This module answers the questions your CLI needs, such as:
-- list habits (all or by periodicity)
-- calculate streaks (current and longest) for a habit
-- find the habit with the longest streak overall
+This module provides the analytics your CLI relies on, including:
+- listing habits (all habits or filtered by periodicity)
+- computing streaks for a habit (current and longest)
+- identifying the habit with the longest streak overall
 
-Important detail about streaks:
-A streak is counted in *periods* — not raw check-offs.
-- Daily habits: one period = one calendar day (YYYY-MM-DD)
-- Weekly habits: one period = one ISO week (YYYY-W##)
+Key detail about streaks:
+Streaks are measured in completed *periods*, not in raw check-off counts.
+- Daily habits: one period equals one calendar day (YYYY-MM-DD)
+- Weekly habits: one period equals one ISO week (YYYY-W##)
 
 If a user checks off a habit multiple times within the same period,
 it still counts as just ONE successful period.
@@ -67,7 +67,7 @@ def _longest_consecutive_run(dates: List[date], step_days: int) -> int:
     For daily streaks: step_days=1
     For weekly streaks: step_days=7 (we represent weeks by their Monday date)
 
-    We de-duplicate and sort dates so the function is resilient to:
+    We remove duplications and sort dates so the function is resilient to:
     - duplicate completions
     - unsorted inputs
     """
@@ -135,11 +135,15 @@ def current_streak_for(completions_iso: List[str], periodicity: str) -> int:
         return streak
 
     # Weekly: represent weeks by their Monday date and then apply the same logic.
-    completed_week_mondays = sorted(set(iso_week_monday(*parse_iso_week_key(k)) for k in keys))
+    completed_week_mondays = sorted(
+        set(iso_week_monday(*parse_iso_week_key(k)) for k in keys)
+    )
 
     streak = 1
     for idx in range(len(completed_week_mondays) - 1, 0, -1):
-        if completed_week_mondays[idx] - completed_week_mondays[idx - 1] == timedelta(days=7):
+        if completed_week_mondays[idx] - completed_week_mondays[idx - 1] == timedelta(
+            days=7
+        ):
             streak += 1
         else:
             break

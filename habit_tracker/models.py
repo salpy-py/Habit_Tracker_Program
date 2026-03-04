@@ -6,11 +6,10 @@ from typing import Any, Mapping
 class Habit:
     """Represents a habit definition.
 
-    This object stores the *definition* of a habit (name + periodicity).
-    Actual completion events are stored separately in the database as timestamps,
-    because a habit can be completed many times over its lifetime.
+    This object holds the habit’s *definition* (its name and periodicity).
+    Completion events are stored separately in the database as timestamps,
+    since a habit may be checked off many times over its lifetime.
     """
-
     id: str
     name: str
     periodicity: str  # expected values: "daily" or "weekly"
