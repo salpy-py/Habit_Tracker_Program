@@ -1,8 +1,9 @@
-# Habit Tracker (CLI + SQLite)
+  # Habit Tracker (CLI + SQLite)
 
-This repository contains a habit tracking application built in **Python**. The program runs entirely in the terminal (CLI) and stores data in a local **SQLite** database so habits and check-offs persist between sessions.
+A terminal-based habit tracking app built with **Python** and **SQLite**.  
+It supports creating daily/weekly habits, recording check-offs (optionally with custom timestamps), and analyzing **current** and **longest** streaks. All data is stored in a local `habits.db` file so habits and check-offs persist between sessions.
 
-The project focuses on clean structure, correct streak logic (daily vs weekly), and testability (pytest)
+The project is designed for clean structure, correct streak logic (daily vs weekly), and testability (pytest).
 
 ---
 
@@ -16,9 +17,9 @@ The project focuses on clean structure, correct streak logic (daily vs weekly), 
 6. [Running the App](#running-the-app)  
 7. [Command Reference](#command-reference)  
 8. [Analytics Reference](#analytics-reference)  
-9. [Using the Predefined Dataset](#using-the-predefined-dataset)  
-10. [Running Unit Tests](#running-unit-tests)  
-
+9. [Running Unit Tests](#running-unit-tests)  
+10. [Reset Database (Start Fresh)](#reset-database-start-fresh)    
+11. [License](#license)  
 
 ---
 
@@ -26,7 +27,7 @@ The project focuses on clean structure, correct streak logic (daily vs weekly), 
 
 ### Habit management (CRUD)
 - Create a habit with:
-  - a **name** (unique)
+  - a **unique name**
   - a **periodicity**: `daily` or `weekly`
 - Edit a habit:
   - rename
@@ -43,23 +44,23 @@ The project focuses on clean structure, correct streak logic (daily vs weekly), 
   - **current streak**
   - **longest streak**
 - Filter habits by periodicity (`daily` / `weekly`)
-- Longest streak overall across all habits (**shows ties**, not only one habit)
+- Show the habit(s) with the longest streak overall (**ties supported**)
 - One-habit analytics view (current/longest/completion count)
 
 ### Persistence
 - Data is stored in SQLite:
   - habits are stored once
   - completions are stored as timestamped events
-- Data persists between sessions as long as you use the same `.db` file
+- Data persists between sessions as long as you keep using the same `habits.db` file
 
 ### Testing
 - Pytest unit test suite included
-- Uses **4 weeks** of deterministic time-series fixture data to verify streak logic
+- Deterministic fixture data (4 weeks) to verify streak logic
 - Tests cover:
   - habit creation/editing/deletion
   - completion recording behavior
   - analytics correctness and edge cases
-  - SQLite schema constraints (FK cascade, uniqueness of completions, meta table)
+  - SQLite schema constraints (FK cascade, uniqueness constraints, seed/idempotency meta table)
 
 ---
 
@@ -68,12 +69,12 @@ The project focuses on clean structure, correct streak logic (daily vs weekly), 
 A **streak is measured in periods**, not raw check-offs.
 
 ### Daily periodicity
-- One “successful period” = at least one completion on a calendar day
+- One “successful period” = **at least one completion on a calendar day**
 - Multiple check-offs in the same day still count as **one** for streak purposes
 - A daily streak is the number of consecutive days completed without a missed day
 
 ### Weekly periodicity
-- One “successful period” = at least one completion in an ISO week (e.g., `2026-W05`)
+- One “successful period” = **at least one completion in an ISO week** (e.g., `2026-W05`)
 - Multiple check-offs within the same ISO week still count as **one** successful week
 - A weekly streak is the number of consecutive ISO weeks completed without skipping a week
 
@@ -117,7 +118,7 @@ High-level structure:
   - derive daily/week period keys
   - compute longest streak per habit
   - compute current streak per habit
-  - compute best habit overall
+  - compute best habit(s) overall (ties)
 
 - `habit_tracker/time_utils.py`  
   Time and bucketing helpers:
@@ -140,33 +141,39 @@ High-level structure:
 
 - Python **3.7+**
 - A terminal (PowerShell / CMD / Terminal)
-- Recommended: create a virtual environment
+- Recommended: create and use a virtual environment
 
 ---
 
 ## Installation
 
-### Windows PowerShell (recommended)
+### Clone the project
+```bash
+git clone https://github.com/salpy-py/Habit_Tracker_Program.git
+```
 
+Then move into the project directory (folder name is usually the repo name):
+```bash
+cd Habit_Tracker_Program
+```
+
+> If your folder name is different, just `cd` into the folder that contains `main.py`.
+
+### Windows PowerShell
 ```powershell
-cd habit_tracker_program
-py -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
 If activation is blocked:
-
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 
-
 ### macOS / Linux
-
 ```bash
-cd habit_tracker_program
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -179,133 +186,17 @@ pip install -r requirements.txt
 Run commands from the folder that contains `main.py`.
 
 ### Show global help
-
 ```bash
 python main.py --help
 ```
 
-### Five Predefined habits 
-
-This project includes 5 predefined habits.
-
-Execute the following command to add 5 predefinied habits (with 4 weeks of example completion data)
-
-```
-python main.py seed
-```
-
-### Database
-
-By default, the app uses `habits.db` in the current directory. Executing the following command will list out all the recorded habits in the database.
-
-
-```bash
-python main.py list
-```
-
----
-
-## Command Reference
-
-All commands follow this pattern:
-
-```bash
-python main.py <command> [options]
-```
-
-### Add a habit
-
-```bash
-python main.py add --name "Read 20 minutes" --period daily
-python main.py add --name "Clean room" --period weekly
-```
-
-### Edit a habit
-
-`--key` can be **name or id**.
-
-Rename:
-
-```bash
-python main.py edit --key "Read 20 minutes" --name "Read Book"
-```
-
-Change periodicity:
-
-```bash
-python main.py edit --key "Read Book" --period weekly
-```
-
 ### List habits
-
 ```bash
 python main.py list
 ```
 
-### Delete a habit
-
-```bash
-python main.py delete --key "Read Book"
-```
-
-### Check off a habit
-
-Use current time:
-
-```bash
-python main.py checkoff --key "Drink 2L water"
-```
-
-Use a specific timestamp (ISO format):
-
-```bash
-python main.py checkoff --key "Drink 2L water" --at "2026-01-05T12:00:00"
-```
-
-Timestamp format:
-
-- `YYYY-MM-DDTHH:MM:SS`  
-  Example: `2026-01-05T12:00:00`
-
----
-
-## Analytics Reference
-
-### Overview (current + longest for every habit)
-
-```bash
-python main.py analyze --all
-```
-
-### Filter habits by periodicity
-
-```bash
-python main.py analyze --period daily
-python main.py analyze --period weekly
-```
-
-### Longest streak/streaks overall
-
-```bash
-python main.py analyze --longest
-```
-
-### One habit detail view
-
-```bash
-python main.py analyze --habit "Clean Room" 
-```
-
----
-
-## Using the Predefined Dataset
-
-This project includes a deterministic fixture dataset:
-
-- **5 predefined habits** (at least one daily and one weekly)
-- **4 weeks of completion history** per habit
-
-To insert it:
+### Seed predefined habits + example completion data
+This project includes **5 predefined habits** and **4 weeks of example completion data**.
 
 ```bash
 python main.py seed
@@ -315,18 +206,91 @@ Seeding is **idempotent**, meaning you can run it more than once without duplica
 
 ---
 
+## Command Reference
+
+All commands follow this pattern:
+```bash
+python main.py <command> [options]
+```
+
+### Add a habit
+```bash
+python main.py add --name "Read 20 minutes" --period daily
+python main.py add --name "Clean room" --period weekly
+```
+
+### Edit a habit
+`--key` can be **name or id**.
+
+Rename:
+```bash
+python main.py edit --key "Read 20 minutes" --name "Read Book"
+```
+
+Change periodicity:
+```bash
+python main.py edit --key "Read Book" --period weekly
+```
+
+### Delete a habit
+```bash
+python main.py delete --key "Read Book"
+```
+
+### Check off a habit
+
+Use current time:
+```bash
+python main.py checkoff --key "Drink 2L water"
+```
+
+Use a specific timestamp (ISO format):
+```bash
+python main.py checkoff --key "Drink 2L water" --at "2026-01-05T12:00:00"
+```
+
+Timestamp format:
+- `YYYY-MM-DDTHH:MM:SS`  
+  Example: `2026-01-05T12:00:00`
+
+---
+
+## Analytics Reference
+
+### Overview (current + longest for every habit)
+```bash
+python main.py analyze --all
+```
+
+### Filter habits by periodicity
+```bash
+python main.py analyze --period daily
+python main.py analyze --period weekly
+```
+
+### Longest streak/streaks overall (ties supported)
+```bash
+python main.py analyze --longest
+```
+
+### One habit detail view
+```bash
+python main.py analyze --habit "Clean Room"
+```
+
+---
+
+
 ## Running Unit Tests
 
 This project uses **pytest**.
 
 Run all tests:
-
 ```bash
 python -m pytest
 ```
 
 Run a specific test file:
-
 ```bash
 python -m pytest tests/test_habit_crud.py -q
 python -m pytest tests/test_sqlite_handler.py -q
@@ -334,15 +298,30 @@ python -m pytest tests/test_time_utils.py -q
 ```
 
 What the tests cover:
-
 - Habit CRUD: create, edit, delete, validation cases
 - Check-off behavior: adds completions, ignores duplicates where expected
 - Analytics: filtering, period bucketing, current/longest streak calculations
 - Edge cases: gaps in streak, multiple check-offs in same period, unsorted input
 - SQLite behavior: schema created correctly, FK cascade works, uniqueness works
 
+---
+
+## Reset Database (Start Fresh)
+
+The app uses `habits.db` in the current directory. To reset everything, delete that file.
+
+### PowerShell
+```powershell
+Remove-Item .\habits.db -ErrorAction SilentlyContinue
+```
+
+### CMD
+```cmd
+del habits.db 2>nul
+```
 
 ---
+
 
 ## License
 
