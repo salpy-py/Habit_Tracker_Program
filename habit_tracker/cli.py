@@ -61,8 +61,14 @@ def build_parser() -> argparse.ArgumentParser:
     delete_cmd = subcommands.add_parser("delete", help="Delete a habit by name or id")
     delete_cmd.add_argument("--key", required=True, help="Habit name or id")
 
+    # IMPORTANT: create the parser first, then add its arguments.
     checkoff_cmd = subcommands.add_parser("checkoff", help="Record a completion for a habit")
     checkoff_cmd.add_argument("--key", required=True, help="Habit name or id")
+    checkoff_cmd.add_argument(
+        "--at",
+        dest="timestamp_iso",
+        help="Optional ISO timestamp (e.g. 2026-01-01T12:00:00). If omitted, uses current time.",
+    )
 
     subcommands.add_parser("list", help="List all habits")
     subcommands.add_parser("seed", help="Insert predefined habits + 4-week fixture data (idempotent)")
@@ -98,7 +104,9 @@ def _cmd_delete(tracker: HabitTracker, args) -> int:
 
 
 def _cmd_checkoff(tracker: HabitTracker, args) -> int:
-    tracker.check_off(args.key)
+    # If --at is not provided, timestamp_iso will be None and the tracker
+    # will record the completion using the current time (existing behavior).
+    tracker.check_off(args.key, timestamp_iso=getattr(args, "timestamp_iso", None))
     print("Check-off recorded.")
     return 0
 
@@ -145,11 +153,19 @@ def _cmd_analyze(tracker: HabitTracker, args) -> int:
         return 0
 
     if args.longest:
-        habit, streak = tracker.analyze_longest_overall()
-        if not habit:
+        overview = tracker.analyze_overview()
+        if not overview:
             print("No habits found.")
             return 0
-        print(f"Longest streak overall: {habit.name} [{habit.periodicity}] = {streak}")
+
+        max_longest = max(longest for (_, _, longest) in overview)
+
+        winners = []
+        for habit, _, longest in overview:
+            if longest == max_longest:
+                winners.append((habit.name, habit.periodicity, longest, _format_id(habit.id)))
+
+        _print_table(["Habit", "Period", "Longest", "ID"], winners)
         return 0
 
     if args.habit_key:
