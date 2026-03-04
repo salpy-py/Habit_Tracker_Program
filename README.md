@@ -162,19 +162,11 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 
-### Windows CMD
-
-```bat
-cd /d path\to\habit_tracker_program
-py -m venv .venv
-.\.venv\Scripts\activate.bat
-pip install -r requirements.txt
-```
 
 ### macOS / Linux
 
 ```bash
-cd path/to/habit_tracker_program
+cd habit_tracker_program
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -192,9 +184,19 @@ Run commands from the folder that contains `main.py`.
 python main.py --help
 ```
 
-### Database note (important)
+### Five Predefined habits 
 
-By default, the app uses `habits.db` in the current directory.
+This project includes 5 predefined habits.
+
+Execute the following command to add 5 predefinied habits (with 4 weeks of example completion data)
+
+```
+python main.py seed
+```
+
+### Database
+
+By default, the app uses `habits.db` in the current directory. Executing the following command will list out all the recorded habits in the database.
 
 
 ```bash
